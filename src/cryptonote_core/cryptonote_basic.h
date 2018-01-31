@@ -208,22 +208,22 @@ namespace cryptonote
         if (!signatures_not_expected && vin.size() != signatures.size())
           return false;
 
-        for (size_t i = 0; i < vin.size(); ++i)
+      for (size_t i = 0; i < vin.size(); ++i)
+      {
+        size_t signature_size = get_signature_size(vin[i]);
+        if (signatures_not_expected)
         {
-          size_t signature_size = get_signature_size(vin[i]);
-          if (signatures_not_expected)
-          {
-            if (0 == signature_size)
-              continue;
-            else
-              return false;
-          }
-
-          PREPARE_CUSTOM_VECTOR_SERIALIZATION(signature_size, signatures[i]);
-          if (signature_size != signatures[i].size())
+          if (0 == signature_size)
+            continue;
+          else
             return false;
+        }
 
-          FIELDS(signatures[i]);
+        PREPARE_CUSTOM_VECTOR_SERIALIZATION(signature_size, signatures[i]);
+        if (signature_size != signatures[i].size())
+          return false;
+
+        FIELDS(signatures[i]);
 
           if (vin.size() - i > 1)
             ar.delimit_array();
@@ -480,6 +480,7 @@ namespace cryptonote
 
     BEGIN_SERIALIZE()
       VARINT_FIELD(major_version)
+      if(major_version > BLOCK_MAJOR_VERSION_3) return false;
       VARINT_FIELD(minor_version)
       VARINT_FIELD(timestamp)
       FIELD(prev_id)

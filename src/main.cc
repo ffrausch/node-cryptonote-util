@@ -238,6 +238,15 @@ void construct_block_blob_fa(const Nan::FunctionCallbackInfo<v8::Value>& info) {
         if (!mergeBlocks(parent_block, b, std::vector<crypto::hash>()))
             return THROW_ERROR_EXCEPTION("Failed to postprocess mining block");
     }
+    if (b.major_version == BLOCK_MAJOR_VERSION_3) {
+        block parent_block;
+        b.parent_block.nonce = nonce;
+        if (!construct_parent_block(b, parent_block))
+            return except("Failed to construct parent block");
+
+        if (!mergeBlocks(parent_block, b, std::vector<crypto::hash>()))
+            return except("Failed to postprocess mining block");
+    }
 
     if (!block_to_blob(b, output))
         return THROW_ERROR_EXCEPTION("Failed to convert block to blob");
