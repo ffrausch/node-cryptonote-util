@@ -773,9 +773,9 @@ namespace cryptonote
     if(!get_bytecoin_block_hashing_blob(b, bd))
       return false;
     //crypto::cn_slow_hash(bd.data(), bd.size(), res);
-    if (b.major_version == BLOCK_MAJOR_VERSION_3) {
+    if (b.major_version == BLOCK_MAJOR_VERSION_3 || b.major_version == BLOCK_MAJOR_VERSION_4) {
       crypto::cn_slow_hash(bd.data(), bd.size(), res);
-    } else if (b.major_version == BLOCK_MAJOR_VERSION_4) {
+    } else if (b.major_version == BLOCK_MAJOR_VERSION_5) {
     }
     return true;
   }
